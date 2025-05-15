@@ -1,0 +1,36 @@
+
+body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 20px;
+}
+#chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 300px;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+#chat-box {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+#chat-form {
+  display: flex;
+}
+#userInput {
+  flex: 1;
+  padding: 8px;
+}
+button {
+  padding: 8px;
+}
+.hidden {
+  display: none;
+}
