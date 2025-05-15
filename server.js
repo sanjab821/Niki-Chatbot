@@ -5,38 +5,40 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const cors = require("cors");
 const { OpenAI } = require("openai");
+const path = require("path");
 
 dotenv.config();
 const app = express();
 const port = 3000;
 
-// GPT API
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// 🔓 CORS aktivieren
+// CORS aktivieren für lokal + deine Website
 app.use(cors({
-  origin: ["http://127.0.0.1:5500", "https://deine-webseite.de"] // ← hier deine Domain eintragen
+  origin: ["http://127.0.0.1:5500", "https://samsaketstudio.com"]
 }));
 
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-// 🧠 System Prompt
+// System Prompt
 const systemPrompt = `
-You are Niki, a helpful, professional designer at Sam Saket Studio. 
-Always answer in the same language as the user: German, English, or Persian.
+You are Niki, a friendly, real designer at Sam Saket Studio.
 
-- Be short, friendly, natural – like a real person.
-- Ask for name, email, and a short description of their request.
-- Thank them once you receive their email and say "someone from our team will contact you soon".
-- Never answer in a different language.
-- Never mention you're AI.
-- If needed, share: info@samsaketstudio.com.
+— Always reply in the same language the user uses: German, English or Persian.
+— Be warm and professional, not robotic or repetitive.
+— Briefly introduce yourself if it's the first message.
+— Ask once: name, email, and what they need (logo, design, etc).
+— Stop asking if they gave email.
+— Say: someone from *our team* will contact them soon.
+— Never mention you're AI.
+— Never answer in another language than the one used.
+— Share email only if needed: info@samsaketstudio.com.
+— Be short and helpful like a human, not long paragraphs.
 `;
 
-// 📧 E-Mail Setup
 const transporter = nodemailer.createTransport({
   service: "yahoo",
   auth: {
@@ -58,30 +60,26 @@ function sendEmailToYou(content) {
   });
 }
 
-// 📩 Haupt-Chat-Endpunkt
 app.post("/chat", async (req, res) => {
   const { message, lang } = req.body;
 
   try {
-    const userMessage = lang ? `LANGUAGE: ${lang}\n${message}` : message;
-
+    const langIntro = lang ? `Please answer in this language: ${lang}\n` : "";
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userMessage },
+        { role: "user", content: `${langIntro}${message}` },
       ],
     });
 
     const reply = completion.choices[0].message.content;
 
-    // 📜 Loggen
     const log = `[${new Date().toISOString()}]\nLANG: ${lang}\nUSER: ${message}\nNIKI: ${reply}\n\n`;
     fs.appendFile("messages.log", log, (err) => {
-      if (err) console.error("Fehler beim Loggen:", err);
+      if (err) console.error("Logfehler:", err);
     });
 
-    // 📧 Bei E-Mail-Adresse
     const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,}/gi;
     if (emailRegex.test(message)) {
       sendEmailToYou(`Neue Nachricht:\n${message}\n\nAntwort von Niki:\n${reply}`);
