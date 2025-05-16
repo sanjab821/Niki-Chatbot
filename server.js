@@ -80,17 +80,10 @@ app.post("/chat", async (req, res) => {
       if (err) console.error("Logfehler:", err);
     });
 
-   // 📧 Immer E-Mail senden – auch ohne erkannte Adresse
-const emailContent = `🗨️ Neue Unterhaltung:
-
-USER: ${message}
-
-NIKI: ${reply}
-
-[gesendet am: ${new Date().toLocaleString()}]
-`;
-
-sendEmailToYou(emailContent);
+   const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,}/gi;
+    if (emailRegex.test(message)) {
+      sendEmailToYou(`Neue Nachricht:\n${message}\n\nAntwort von Niki:\n${reply}`);
+    }
 
 
     res.json({ reply });
