@@ -80,10 +80,16 @@ app.post("/chat", async (req, res) => {
       if (err) console.error("Logfehler:", err);
     });
 
-    const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]{2,}/gi;
-    if (emailRegex.test(message)) {
-      sendEmailToYou(`Neue Nachricht:\n${message}\n\nAntwort von Niki:\n${reply}`);
-    }
+   const emailContent = `🗨️ Neue Unterhaltung:
+
+    USER: ${message}
+
+    NIKI: ${reply}
+
+    [gesendet am: ${new Date().toLocaleString()}]
+    `;
+
+    sendEmailToYou(emailContent);
 
     res.json({ reply });
   } catch (err) {
