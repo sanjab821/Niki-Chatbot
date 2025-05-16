@@ -17,7 +17,13 @@ const openai = new OpenAI({
 
 // CORS aktivieren für lokal + deine Website
 app.use(cors({
-  origin: ["http://127.0.0.1:5500", "https://samsaketstudio.com"]
+  origin: [
+    "http://127.0.0.1:5500",
+    "http://samsaketstudio.com",
+    "https://samsaketstudio.com",
+    "https://www.samsaketstudio.com",
+    "http://www.samsaketstudio.com"
+  ]
 }));
 
 app.use(bodyParser.json());
