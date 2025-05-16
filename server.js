@@ -80,16 +80,18 @@ app.post("/chat", async (req, res) => {
       if (err) console.error("Logfehler:", err);
     });
 
-   const emailContent = `🗨️ Neue Unterhaltung:
+   // 📧 Immer E-Mail senden – auch ohne erkannte Adresse
+const emailContent = `🗨️ Neue Unterhaltung:
 
-    USER: ${message}
+USER: ${message}
 
-    NIKI: ${reply}
+NIKI: ${reply}
 
-    [gesendet am: ${new Date().toLocaleString()}]
-    `;
+[gesendet am: ${new Date().toLocaleString()}]
+`;
 
-    sendEmailToYou(emailContent);
+sendEmailToYou(emailContent);
+
 
     res.json({ reply });
   } catch (err) {
