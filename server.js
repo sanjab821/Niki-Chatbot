@@ -98,7 +98,6 @@ sendEmailToYou(emailContent);
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Niki läuft auf Port ${PORT}`);
+app.listen(port, () => {
+  console.log(`✅ Niki läuft auf http://localhost:${port}`);
 });
